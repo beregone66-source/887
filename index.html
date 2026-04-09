@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BioSchedule - بايو شيدول</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-grid"></div>
+
+    <header class="topbar glass">
+      <div class="brand-wrap">
+        <div class="brand-icon"><i class="fa-solid fa-dna"></i></div>
+        <div>
+          <h1>BioSchedule</h1>
+          <p>تنظيم الجداول والمختبرات والمهام الأكاديمية</p>
+        </div>
+      </div>
+      <button id="themeToggle" class="icon-btn" type="button" title="تبديل الوضع">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </header>
+
+    <main class="main-content">
+      <section id="loginView" class="view active">
+        <div class="login-layout">
+          <div class="glass hero-card floating-card">
+            <div class="hero-badge"><i class="fa-solid fa-sparkles"></i> نظام جامعي منظم وسهل</div>
+            <h2>واجهة ذكية للطالب والأستاذ والمقرر</h2>
+            <p>
+              منصة ويب مهيأة لإدارة الجداول الدراسية، المختبرات، المواد، المهام، والمحتوى الأكاديمي بطريقة أنيقة وواضحة.
+            </p>
+            <div class="hero-stats">
+              <div class="stat-box glass-soft">
+                <strong>4</strong>
+                <span>صلاحيات</span>
+              </div>
+              <div class="stat-box glass-soft">
+                <strong>24/7</strong>
+                <span>وصول سريع</span>
+              </div>
+              <div class="stat-box glass-soft">
+                <strong>100%</strong>
+                <span>واجهة عربية</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass auth-card">
+            <div class="section-title compact">
+              <div>
+                <h3>تسجيل الدخول</h3>
+                <p>تجربة أولية للنظام بإيميل جامعي وصلاحيات متعددة</p>
+              </div>
+              <div class="chip success"><i class="fa-solid fa-shield-halved"></i> خصوصية أكاديمية</div>
+            </div>
+
+            <form id="loginForm" class="form-grid">
+              
+              <div class="role-3d-container">
+                <label class="role-3d-card">
+                  <input type="radio" name="roleInput" value="student" checked>
+                  <div class="card-content">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>الدخول ك طالب</span>
+                  </div>
+                </label>
+                <label class="role-3d-card">
+                  <input type="radio" name="roleInput" value="teacher">
+                  <div class="card-content">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>الدخول ك استاذ جامعي</span>
+                  </div>
+                </label>
+                <label class="role-3d-card">
+                  <input type="radio" name="roleInput" value="admin">
+                  <div class="card-content">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>الدخول ك الادارة</span>
+                  </div>
+                </label>
+              </div>
+
+              <label class="input-group">
+                <span>الاسم الكامل</span>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-user"></i>
+                  <input id="nameInput" type="text" placeholder="مثال: علي حسن" required />
+                </div>
+              </label>
+
+              <label class="input-group">
+                <span>الإيميل الجامعي</span>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-envelope"></i>
+                  <input id="emailInput" type="email" placeholder="name@university.edu" required />
+                </div>
+                <small>يسمح فقط بإيميل جامعي تجريبي ينتهي بـ .edu أو يحتوي university</small>
+              </label>
+
+              <label class="input-group">
+                <span>القسم</span>
+                <div class="input-wrap select-wrap">
+                  <i class="fa-solid fa-building-columns"></i>
+                  <select id="departmentInput">
+                    <option value="علوم الحياة">علوم الحياة</option>
+                    <option value="الفيزياء">الفيزياء</option>
+                    <option value="الرياضيات">الرياضيات</option>
+                    <option value="علوم الحاسوب">علوم الحاسوب</option>
+                  </select>
+                </div>
+              </label>
+
+              <button class="primary-btn" type="submit">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                دخول إلى النظام
+              </button>
+            </form>
+
+            <div class="glowing-note">
+              <i class="fa-solid fa-bolt"></i>
+              <span>تمة برمجة هاذ النضام بواسطة شركة فن التلكوجيا الحيث</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="appView" class="view">
+        <div class="dashboard-head glass">
+          <div>
+            <div class="section-title compact no-margin">
+              <div>
+                <h3 id="welcomeTitle">أهلاً بك</h3>
+                <p id="welcomeSub">إدارة يومك الأكاديمي بشكل منظم</p>
+              </div>
+            </div>
+          </div>
+          <div class="head-actions">
+            <button id="joinCodeBtn" class="secondary-btn" type="button">
+              <i class="fa-solid fa-qrcode"></i>
+              رمز الشعبة
+            </button>
+            <button id="logoutBtn" class="danger-btn" type="button">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              تسجيل الخروج
+            </button>
+          </div>
+        </div>
+
+        <section class="summary-grid">
+          <article class="glass metric-card">
+            <div class="metric-icon"><i class="fa-solid fa-calendar-days"></i></div>
+            <div>
+              <span>محاضرات هذا الأسبوع</span>
+              <strong id="metricLectures">0</strong>
+            </div>
+          </article>
+          <article class="glass metric-card">
+            <div class="metric-icon"><i class="fa-solid fa-flask-vial"></i></div>
+            <div>
+              <span>مختبرات قريبة</span>
+              <strong id="metricLabs">0</strong>
+            </div>
+          </article>
+          <article class="glass metric-card">
+            <div class="metric-icon"><i class="fa-solid fa-list-check"></i></div>
+            <div>
+              <span>مهام مفتوحة</span>
+              <strong id="metricTasks">0</strong>
+            </div>
+          </article>
+          <article class="glass metric-card">
+            <div class="metric-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <div>
+              <span>نسبة الالتزام</span>
+              <strong id="metricCommitment">0%</strong>
+            </div>
+          </article>
+        </section>
+
+        <section id="tab-home" class="tab-panel active">
+          <div class="content-grid two-col">
+            <article class="glass content-card">
+              <div class="section-title">
+                <div>
+                  <h3>نظرة عامة</h3>
+                  <p>ملخص سريع لأهم النشاطات والبيانات</p>
+                </div>
+                <div class="chip"><i class="fa-solid fa-house"></i> الرئيسية</div>
+              </div>
+              <div id="overviewCards" class="mini-grid"></div>
+            </article>
+
+            <article class="glass content-card">
+              <div class="section-title">
+                <div>
+                  <h3>التنبيهات داخل التطبيق</h3>
+                  <p>تنبيهات ذكية للمحاضرات والتسليمات القريبة</p>
+                </div>
+                <div class="chip warning"><i class="fa-solid fa-bell"></i> تذكيرات</div>
+              </div>
+              <div id="alertsList" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="tab-schedule" class="tab-panel">
+          <div class="content-grid two-col">
+            <article class="glass content-card">
+              <div class="section-title">
+                <div>
+                  <h3>جدول المحاضرات</h3>
+                  <p>الجدول الأسبوعي المرسل من مقرر القسم</p>
+                </div>
+                <div class="chip info"><i class="fa-solid fa-table-cells-large"></i> الأسبوعي</div>
+              </div>
+              <div id="scheduleGrid" class="schedule-grid"></div>
+            </article>
+
+            <article class="glass content-card form-card role-admin-only role-representative-only">
+              <div class="section-title">
+                <div>
+                  <h3>إضافة محاضرة</h3>
+                  <p>خاص بالمقرر أو ممثل الشعبة</p>
+                </div>
+              </div>
+              <form id="scheduleForm" class="form-grid compact-grid">
+                <label class="input-group">
+                  <span>اسم المادة</span>
+                  <div class="input-wrap"><i class="fa-solid fa-book"></i><input name="title" type="text" required></div>
+                </label>
+                <label class="input-group">
+                  <span>اليوم</span>
+                  <div class="input-wrap select-wrap"><i class="fa-solid fa-calendar-day"></i>
+                    <select name="day">
+                      <option>الأحد</option><option>الاثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option>
+                    </select>
+                  </div>
+                </label>
+                <label class="input-group">
+                  <span>الوقت</span>
+                  <div class="input-wrap"><i class="fa-regular fa-clock"></i><input name="time" type="text" placeholder="09:00 - 10:30" required></div>
+                </label>
+                <label class="input-group">
+                  <span>المكان</span>
+                  <div class="input-wrap"><i class="fa-solid fa-location-dot"></i><input name="location" type="text" required></div>
+                </label>
+                <label class="input-group full-span">
+                  <span>نوع المحاضرة</span>
+                  <div class="toggle-row">
+                    <label><input type="radio" name="type" value="نظري" checked> نظري</label>
+                    <label><input type="radio" name="type" value="عملي"> عملي</label>
+                    <label><input type="radio" name="type" value="مختبر"> مختبر</label>
+                  </div>
+                </label>
+                <button class="primary-btn" type="submit"><i class="fa-solid fa-plus"></i> حفظ المحاضرة</button>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section id="tab-materials" class="tab-panel">
+          <div class="content-grid two-col">
+            <article class="glass content-card">
+              <div class="section-title">
+                <div>
+                  <h3>المواد الدراسية</h3>
+                  <p>ملفات وروابط ومحتوى كل مادة</p>
+                </div>
+                <div class="chip success"><i class="fa-solid fa-book-open-reader"></i> المحتوى</div>
+              </div>
+              <div id="materialsList" class="list-grid"></div>
+            </article>
+
+            <article class="glass content-card role-teacher-only role-admin-only">
+              <div class="section-title">
+                <div>
+                  <h3>إدارة المواد</h3>
+                  <p>خاص بالأستاذ أو الإدارة</p>
+                </div>
+                <button id="showAddMaterialFormBtn" class="primary-btn" type="button"><i class="fa-solid fa-plus"></i> إضافة مادة جديدة</button>
+              </div>
+              <div id="materialFormContainer" class="hidden">
+                <form id="materialForm" class="form-grid compact-grid" style="margin-top: 20px;">
+                  <input type="hidden" name="materialId" id="materialIdInput">
+                  <label class="input-group">
+                    <span>اسم المادة</span>
+                    <div class="input-wrap"><i class="fa-solid fa-book-medical"></i><input name="title" type="text" required></div>
+                  </label>
+                  <label class="input-group">
+                    <span>اسم الأستاذ</span>
+                    <div class="input-wrap"><i class="fa-solid fa-chalkboard-user"></i><input name="teacher" type="text" required></div>
+                  </label>
+                  <label class="input-group full-span">
+                    <span>نوع المادة</span>
+                    <div class="toggle-row">
+                      <label><input type="radio" name="materialType" value="نظري" checked> نظري</label>
+                      <label><input type="radio" name="materialType" value="عملي"> عملي</label>
+                    </div>
+                  </label>
+                  <label class="input-group full-span">
+                    <span>وصف مختصر</span>
+                    <div class="input-wrap textarea-wrap"><i class="fa-solid fa-align-right"></i><textarea name="description" rows="3" required></textarea></div>
+                  </label>
+                  <label class="input-group">
+                    <span>رابط PDF</span>
+                    <div class="input-wrap"><i class="fa-solid fa-file-pdf"></i><input name="pdf" type="url" placeholder="https://..."></div>
+                  </label>
+                  <label class="input-group">
+                    <span>رابط فيديو</span>
+                    <div class="input-wrap"><i class="fa-brands fa-youtube"></i><input name="video" type="url" placeholder="https://..."></div>
+                  </label>
+                  
+                  <div class="head-actions full-span" style="margin-top: 10px;">
+                    <button class="primary-btn" type="submit" style="flex: 1;"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
+                    <button class="secondary-btn" type="button" onclick="cancelMaterialEdit()" style="flex: 1;"><i class="fa-solid fa-xmark"></i> إلغاء</button>
+                  </div>
+                </form>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="tab-labs" class="tab-panel">
+          <div class="content-grid two-col">
+            <article class="glass content-card">
+              <div class="section-title">
+                <div>
+                  <h3>المختبرات</h3>
+                  <p>التجارب، المواد المطلوبة، والتقارير</p>
+                </div>
+                <div class="chip danger"><i class="fa-solid fa-microscope"></i> المختبر</div>
+              </div>
+              <div id="labsList" class="list-stack"></div>
+            </article>
+
+            <article class="glass content-card form-card role-teacher-only role-admin-only">
+              <div class="section-title">
+                <div>
+                  <h3>إضافة مختبر</h3>
+                  <p>إدارة التجارب والمستلزمات والتقارير</p>
+                </div>
+              </div>
+              <form id="labForm" class="form-grid compact-grid">
+                <label class="input-group">
+                  <span>المادة</span>
+                  <div class="input-wrap"><i class="fa-solid fa-vials"></i><input name="course" type="text" required></div>
+                </label>
+                <label class="input-group">
+                  <span>اسم التجربة</span>
+                  <div class="input-wrap"><i class="fa-solid fa-flask"></i><input name="title" type="text" required></div>
+                </label>
+                <label class="input-group">
+                  <span>الموعد</span>
+                  <div class="input-wrap"><i class="fa-solid fa-calendar-check"></i><input name="date" type="date" required></div>
+                </label>
+                <label class="input-group full-span">
+                  <span>المواد المطلوبة</span>
+                  <div class="input-wrap textarea-wrap"><i class="fa-solid fa-box-open"></i><textarea name="requirements" rows="3" required></textarea></div>
+                </label>
+                <label class="input-group full-span">
+                  <span>رابط الملف / التقرير</span>
+                  <div class="input-wrap"><i class="fa-solid fa-paperclip"></i><input name="attachment" type="url" placeholder="https://..."></div>
+                </label>
+                <button class="primary-btn" type="submit"><i class="fa-solid fa-plus"></i> حفظ المختبر</button>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section id="tab-tasks" class="tab-panel">
+          <div class="content-grid two-col">
+            <article class="glass content-card">
+              <div class="section-title">
+                <div>
+                  <h3>المهام والتقارير</h3>
+                  <p>عدّاد تنازلي وحالة كل مهمة</p>
+                </div>
+                <div class="chip warning"><i class="fa-solid fa-hourglass-half"></i> التسليم</div>
+              </div>
+              <div id="tasksList" class="list-stack"></div>
+            </article>
+
+            <article class="glass content-card form-card role-teacher-only role-admin-only">
+              <div class="section-title">
+                <div>
+                  <h3>إضافة مهمة</h3>
+                  <p>واجب أو تقرير أو امتحان قصير</p>
+                </div>
+              </div>
+              <form id="taskForm" class="form-grid compact-grid">
+                <label class="input-group">
+                  <span>عنوان المهمة</span>
+                  <div class="input-wrap"><i class="fa-solid fa-pen-ruler"></i><input name="title" type="text" required></div>
+                </label>
+                <label class="input-group">
+                  <span>المادة</span>
+                  <div class="input-wrap"><i class="fa-solid fa-book-open"></i><input name="course" type="text" required></div>
+                </label>
+                <label class="input-group">
+                  <span>موعد التسليم</span>
+                  <div class="input-wrap"><i class="fa-solid fa-calendar-xmark"></i><input name="deadline" type="date" required></div>
+                </label>
+                <label class="input-group full-span">
+                  <span>التفاصيل</span>
+                  <div class="input-wrap textarea-wrap"><i class="fa-solid fa-list"></i><textarea name="details" rows="3" required></textarea></div>
+                </label>
+                <button class="primary-btn" type="submit"><i class="fa-solid fa-check-double"></i> حفظ المهمة</button>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section id="tab-stats" class="tab-panel">
+          <div class="content-grid two-col">
+            <article class="glass content-card">
+              <div class="section-title">
+                <div>
+                  <h3>إحصائيات الطالب</h3>
+                  <p>نسبة الالتزام والنشاطات الأكاديمية</p>
+                </div>
+                <div class="chip info"><i class="fa-solid fa-chart-pie"></i> الإحصائيات</div>
+              </div>
+              <div id="statsGrid" class="stats-grid"></div>
+            </article>
+
+            <article class="glass content-card role-admin-only">
+              <div class="section-title">
+                <div>
+                  <h3>لوحة الإدارة</h3>
+                  <p>ملخص سريع للمستخدمين والصلاحيات والربط</p>
+                </div>
+              </div>
+              <div id="adminOverview" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="tab-account" class="tab-panel">
+          <div class="content-grid two-col">
+            <article class="glass content-card">
+              <div class="section-title">
+                <div>
+                  <h3>الحساب</h3>
+                  <p>معلومات المستخدم الحالية</p>
+                </div>
+              </div>
+              <div id="accountCard" class="profile-card"></div>
+            </article>
+
+            <article class="glass content-card">
+              <div class="section-title">
+                <div>
+                  <h3>إعدادات وتجربة النظام</h3>
+                  <p>خيارات محلية لنسخة العرض</p>
+                </div>
+              </div>
+              <div class="settings-list">
+                <button id="seedBtn" class="secondary-btn full-btn" type="button"><i class="fa-solid fa-database"></i> إعادة تحميل البيانات التجريبية</button>
+                <button id="clearBtn" class="danger-btn full-btn" type="button"><i class="fa-solid fa-trash"></i> حذف البيانات المحلية</button>
+              </div>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <nav id="bottomNav" class="bottom-nav glass hidden">
+      <button class="nav-item active" data-tab="home"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
+      <button class="nav-item" data-tab="schedule"><i class="fa-solid fa-calendar-week"></i><span>الجدول</span></button>
+      <button class="nav-item" data-tab="materials"><i class="fa-solid fa-book-open"></i><span>المواد</span></button>
+      <button class="nav-item" data-tab="labs"><i class="fa-solid fa-flask"></i><span>المختبرات</span></button>
+      <button class="nav-item" data-tab="tasks"><i class="fa-solid fa-list-check"></i><span>المهام</span></button>
+      <button class="nav-item" data-tab="stats"><i class="fa-solid fa-chart-simple"></i><span>الإحصائيات</span></button>
+      <button class="nav-item" data-tab="account"><i class="fa-solid fa-user"></i><span>الحساب</span></button>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>
