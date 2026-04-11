@@ -4,13 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BioSchedule - بايو شيدول</title>
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="networkStatus" class="network-status online"><i class="fa-solid fa-wifi"></i> متصل</div>
+
+  <div id="installModalOverlay" class="install-modal-overlay">
+    <div class="install-modal">
+      <div class="install-icon"><i class="fa-solid fa-download"></i></div>
+      <h2>مرحباً بك في BioSchedule</h2>
+      <p>للحصول على أفضل تجربة وسرعة في الوصول للمحاضرات والمختبرات بدون إنترنت، يرجى تثبيت التطبيق على جهازك الآن لتبدأ تجربتك الأكاديمية معنا.</p>
+      <button id="installBtn" class="primary-btn full-btn"><i class="fa-solid fa-mobile-screen-button"></i> تثبيت التطبيق الآن</button>
+    </div>
+  </div>
+
   <div class="app-shell">
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
@@ -321,7 +334,7 @@
                   
                   <div class="head-actions full-span" style="margin-top: 10px;">
                     <button class="primary-btn" type="submit" style="flex: 1;"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
-                    <button class="secondary-btn" type="button" onclick="cancelMaterialEdit()" style="flex: 1;"><i class="fa-solid fa-xmark"></i> إلغاء</button>
+                    <button class="secondary-btn" type="button" onclick="window.cancelMaterialEdit()" style="flex: 1;"><i class="fa-solid fa-xmark"></i> إلغاء</button>
                   </div>
                 </form>
               </div>
@@ -485,6 +498,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
