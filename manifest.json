@@ -1,7 +1,9 @@
 {
   "name": "BioSchedule",
   "short_name": "BioSchedule",
-  "start_url": "/index.html",
+  "description": "تنظيم الجداول والمختبرات والمهام الأكاديمية",
+  "start_url": "./",
+  "id": "/",
   "display": "standalone",
   "background_color": "#0a1022",
   "theme_color": "#79a9ff",
@@ -9,12 +11,14 @@
     {
       "src": "icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
