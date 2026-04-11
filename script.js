@@ -1,4 +1,18 @@
-const STORAGE_KEY = 'bioschedule_data_v1';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBQgAH6vMMe2JsKe0adZ9lOgzJ7VS-3_l0",
+  authDomain: "asta-d7e4e.firebaseapp.com",
+  projectId: "asta-d7e4e",
+  storageBucket: "asta-d7e4e.firebasestorage.app",
+  messagingSenderId: "845479746428",
+  appId: "1:845479746428:web:f72de165fa64d020ab22f9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const SESSION_KEY = 'bioschedule_session_v1';
 
 const defaultData = {
@@ -47,7 +61,7 @@ const defaultData = {
 };
 
 const state = {
-  data: loadData(),
+  data: structuredClone(defaultData),
   session: loadSession(),
   activeTab: 'home'
 };
@@ -82,7 +96,8 @@ const els = {
   scheduleForm: document.getElementById('scheduleForm'),
   materialForm: document.getElementById('materialForm'),
   labForm: document.getElementById('labForm'),
-  taskForm: document.getElementById('taskForm')
+  taskForm: document.getElementById('taskForm'),
+  networkStatus: document.getElementById('networkStatus')
 };
 
 const roles = {
@@ -92,12 +107,117 @@ const roles = {
   admin: { label: 'الادارة', icon: 'fa-user-shield' }
 };
 
-init();
+localforage.config({ name: 'BioSchedule_DB' });
 
-function init() {
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installModalOverlay').classList.add('active');
+});
+
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      document.getElementById('installModalOverlay').classList.remove('active');
+    }
+    deferredPrompt = null;
+  }
+});
+
+async function init() {
   bindEvents();
   applySavedTheme();
+  await loadLocalData();
   updateAppState();
+  checkNetworkStatus();
+}
+
+window.addEventListener('online', () => {
+  els.networkStatus.className = 'network-status online';
+  els.networkStatus.innerHTML = '<i class="fa-solid fa-wifi"></i> متصل';
+  syncData();
+});
+
+window.addEventListener('offline', () => {
+  els.networkStatus.className = 'network-status offline';
+  els.networkStatus.innerHTML = '<i class="fa-solid fa-plane-slash"></i> غير متصل';
+});
+
+function checkNetworkStatus() {
+  if (navigator.onLine) {
+    els.networkStatus.className = 'network-status online';
+    els.networkStatus.innerHTML = '<i class="fa-solid fa-wifi"></i> متصل';
+    syncData();
+  } else {
+    els.networkStatus.className = 'network-status offline';
+    els.networkStatus.innerHTML = '<i class="fa-solid fa-plane-slash"></i> غير متصل';
+  }
+}
+
+async function loadLocalData() {
+  const localData = await localforage.getItem('appData');
+  if (localData) {
+    state.data = localData;
+  } else {
+    state.data = structuredClone(defaultData);
+    await localforage.setItem('appData', state.data);
+  }
+}
+
+async function enqueueSyncOperation(action, collectionName, item) {
+  const queue = await localforage.getItem('syncQueue') || [];
+  queue.push({ action, collectionName, item, timestamp: Date.now() });
+  await localforage.setItem('syncQueue', queue);
+  if (navigator.onLine) syncData();
+}
+
+async function syncData() {
+  els.networkStatus.className = 'network-status syncing';
+  els.networkStatus.innerHTML = '<i class="fa-solid fa-rotate"></i> جاري المزامنة...';
+  
+  try {
+    const queue = await localforage.getItem('syncQueue') || [];
+    
+    for (const op of queue) {
+      const docRef = doc(db, op.collectionName, op.item.id.toString());
+      if (op.action === 'add' || op.action === 'edit') {
+        await setDoc(docRef, op.item);
+      } else if (op.action === 'delete') {
+        await deleteDoc(docRef);
+      }
+    }
+    await localforage.setItem('syncQueue', []);
+
+    const collectionsToFetch = ['schedule', 'materials', 'labs', 'tasks'];
+    for (const collName of collectionsToFetch) {
+      const querySnapshot = await getDocs(collection(db, collName));
+      const fetchedItems = [];
+      querySnapshot.forEach((doc) => {
+        fetchedItems.push(doc.data());
+      });
+      if (fetchedItems.length > 0) {
+        state.data[collName] = fetchedItems.sort((a,b) => b.id - a.id);
+      }
+    }
+    await localforage.setItem('appData', state.data);
+    renderAll();
+    
+    els.networkStatus.className = 'network-status online';
+    els.networkStatus.innerHTML = '<i class="fa-solid fa-check"></i> تمت المزامنة';
+    setTimeout(() => {
+      els.networkStatus.innerHTML = '<i class="fa-solid fa-wifi"></i> متصل';
+    }, 3000);
+  } catch (error) {
+    els.networkStatus.className = 'network-status offline';
+    els.networkStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> خطأ مزامنة';
+  }
 }
 
 function bindEvents() {
@@ -118,24 +238,26 @@ function bindEvents() {
     document.getElementById('materialIdInput').value = '';
   });
 
-  els.scheduleForm?.addEventListener('submit', e => {
+  els.scheduleForm?.addEventListener('submit', async e => {
     e.preventDefault();
     const form = new FormData(e.target);
-    state.data.schedule.unshift({
+    const item = {
       id: Date.now(),
       title: form.get('title'),
       day: form.get('day'),
       time: form.get('time'),
       location: form.get('location'),
       type: form.get('type')
-    });
-    persistData();
+    };
+    state.data.schedule.unshift(item);
+    await localforage.setItem('appData', state.data);
+    await enqueueSyncOperation('add', 'schedule', item);
     e.target.reset();
     renderAll();
     showToast('تمت إضافة المحاضرة بنجاح');
   });
 
-  els.materialForm?.addEventListener('submit', e => {
+  els.materialForm?.addEventListener('submit', async e => {
     e.preventDefault();
     const form = new FormData(e.target);
     const id = form.get('materialId');
@@ -152,47 +274,54 @@ function bindEvents() {
     if (id) {
       const index = state.data.materials.findIndex(m => m.id === parseInt(id));
       if (index > -1) state.data.materials[index] = matData;
+      await localforage.setItem('appData', state.data);
+      await enqueueSyncOperation('edit', 'materials', matData);
       showToast('تم تعديل المادة بنجاح');
     } else {
       state.data.materials.unshift(matData);
+      await localforage.setItem('appData', state.data);
+      await enqueueSyncOperation('add', 'materials', matData);
       showToast('تم حفظ المادة والمحتوى');
     }
 
-    persistData();
     e.target.reset();
     document.getElementById('materialIdInput').value = '';
     document.getElementById('materialFormContainer').classList.add('hidden');
     renderAll();
   });
 
-  els.labForm?.addEventListener('submit', e => {
+  els.labForm?.addEventListener('submit', async e => {
     e.preventDefault();
     const form = new FormData(e.target);
-    state.data.labs.unshift({
+    const item = {
       id: Date.now(),
       course: form.get('course'),
       title: form.get('title'),
       date: form.get('date'),
       requirements: form.get('requirements'),
       attachment: form.get('attachment')
-    });
-    persistData();
+    };
+    state.data.labs.unshift(item);
+    await localforage.setItem('appData', state.data);
+    await enqueueSyncOperation('add', 'labs', item);
     e.target.reset();
     renderAll();
     showToast('تمت إضافة المختبر');
   });
 
-  els.taskForm?.addEventListener('submit', e => {
+  els.taskForm?.addEventListener('submit', async e => {
     e.preventDefault();
     const form = new FormData(e.target);
-    state.data.tasks.unshift({
+    const item = {
       id: Date.now(),
       title: form.get('title'),
       course: form.get('course'),
       deadline: form.get('deadline'),
       details: form.get('details')
-    });
-    persistData();
+    };
+    state.data.tasks.unshift(item);
+    await localforage.setItem('appData', state.data);
+    await enqueueSyncOperation('add', 'tasks', item);
     e.target.reset();
     renderAll();
     showToast('تمت إضافة المهمة');
@@ -320,8 +449,8 @@ function renderMaterials() {
         ${item.pdf ? `<a class="link-btn" href="${item.pdf}" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> PDF</a>` : ''}
         ${item.video ? `<a class="link-btn" href="${item.video}" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i> فيديو</a>` : ''}
         ${isAdminOrTeacher ? `
-          <button class="secondary-btn" onclick="editMaterial(${item.id})" style="padding: 6px 12px; min-height: auto; font-size: 0.85rem;"><i class="fa-solid fa-pen"></i> تعديل</button>
-          <button class="danger-btn" onclick="deleteMaterial(${item.id})" style="padding: 6px 12px; min-height: auto; font-size: 0.85rem;"><i class="fa-solid fa-trash"></i> حذف</button>
+          <button class="secondary-btn" onclick="window.editMaterial(${item.id})" style="padding: 6px 12px; min-height: auto; font-size: 0.85rem;"><i class="fa-solid fa-pen"></i> تعديل</button>
+          <button class="danger-btn" onclick="window.deleteMaterial(${item.id})" style="padding: 6px 12px; min-height: auto; font-size: 0.85rem;"><i class="fa-solid fa-trash"></i> حذف</button>
         ` : ''}
       </div>
     </div>
@@ -489,19 +618,6 @@ function isAcademicEmail(email) {
   return lower.includes('university') || lower.endsWith('.edu') || lower.includes('.edu.');
 }
 
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : structuredClone(defaultData);
-  } catch {
-    return structuredClone(defaultData);
-  }
-}
-
-function persistData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
-}
-
 function loadSession() {
   try {
     const raw = localStorage.getItem(SESSION_KEY);
@@ -515,15 +631,16 @@ function persistSession() {
   localStorage.setItem(SESSION_KEY, JSON.stringify(state.session));
 }
 
-function reseedData() {
+async function reseedData() {
   state.data = structuredClone(defaultData);
-  persistData();
+  await localforage.setItem('appData', state.data);
   renderAll();
   showToast('تمت إعادة تحميل البيانات التجريبية');
 }
 
-function clearData() {
-  localStorage.removeItem(STORAGE_KEY);
+async function clearData() {
+  await localforage.removeItem('appData');
+  await localforage.removeItem('syncQueue');
   localStorage.removeItem(SESSION_KEY);
   state.data = structuredClone(defaultData);
   state.session = null;
@@ -582,10 +699,12 @@ window.editMaterial = function(id) {
   els.materialForm.scrollIntoView({behavior: 'smooth'});
 };
 
-window.deleteMaterial = function(id) {
+window.deleteMaterial = async function(id) {
   if(confirm('هل أنت متأكد من حذف هذه المادة؟')) {
+    const itemToDelete = state.data.materials.find(m => m.id === id);
     state.data.materials = state.data.materials.filter(m => m.id !== id);
-    persistData();
+    await localforage.setItem('appData', state.data);
+    await enqueueSyncOperation('delete', 'materials', itemToDelete);
     renderAll();
     showToast('تم حذف المادة');
   }
@@ -596,3 +715,5 @@ window.cancelMaterialEdit = function() {
   els.materialForm.reset();
   document.getElementById('materialIdInput').value = '';
 };
+
+init();
