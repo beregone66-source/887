@@ -140,8 +140,8 @@ button { cursor: pointer; }
 }
 .full-btn { width: 100%; }
 
-.view { display: none; }
-.view.active { display: block; }
+.view, .tab-panel { display: none; }
+.view.active, .tab-panel.active { display: block; }
 .hidden { display: none !important; }
 
 .login-layout {
