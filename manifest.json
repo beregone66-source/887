@@ -1,0 +1,20 @@
+{
+  "name": "BioSchedule",
+  "short_name": "BioSchedule",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0a1022",
+  "theme_color": "#79a9ff",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
