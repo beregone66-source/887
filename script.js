@@ -110,7 +110,7 @@ const roles = {
 localforage.config({ name: 'BioSchedule_DB' });
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
+  navigator.serviceWorker.register('./sw.js');
 }
 
 let deferredPrompt;
